@@ -5,9 +5,11 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy.orm import Mapped
 # from sqlalchemy.orm import mapped_column
-# from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import relationship
 
+import os
+from dotenv import find_dotenv,load_dotenv
 from datetime import date
 from flask import Flask, abort, render_template, redirect, url_for, flash
 from flask_bootstrap import Bootstrap5
@@ -25,9 +27,9 @@ import secrets
 from flask import request, render_template, redirect, url_for
 from flask_gravatar import Gravatar
 
-#
-# class Base(DeclarativeBase):
-#     pass
+
+class Base(DeclarativeBase):
+    pass
 
 
 '''
@@ -45,8 +47,12 @@ This will install the packages from the requirements.txt for this project.
 # key = secrets.token_hex(15)
 # print (key)
 
+dotenv_path = find_dotenv()
+load_dotenv(dotenv_path)
+
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "f9fa2087e4a3026801e5039723cff2"
+# app.config['SECRET_KEY'] = "f9fa2087e4a3026801e5039723cff2" ## THIS HAS TO BE HIDDEN & hence the env variable is set in .env file
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 ckeditor = CKEditor(app)
 Bootstrap5(app)
 
@@ -76,8 +82,8 @@ def load_user(user_id):
 
 
 # CONNECT TO DB
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 
 db = SQLAlchemy()
 db.init_app(app)
@@ -303,4 +309,4 @@ def contact():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5002)
+    app.run(debug=False, port=5002)
